@@ -112,3 +112,9 @@ It is hoped, that a new user of scala-js, may be able to experience the joys of 
 
 ## TODO
 Mill plugin
+
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true });
+</script>
