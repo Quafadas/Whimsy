@@ -16,8 +16,7 @@ Arman wrote an SBT plugin which interfaced with the linker circumventing this sh
 
 Thanks :-)...
 
-However, I believe the ideal application would be to have it in scala-cli.
-https://github.com/VirtusLab/scala-cli/discussions/1968#discussioncomment-5446977
+However, I believe the ideal application would be [to have it in scala-cli](https://github.com/VirtusLab/scala-cli/discussions/1968#discussioncomment-5446977)
 
 ## Status:
 [Merged!](https://github.com/VirtusLab/scala-cli/pull/2737)
