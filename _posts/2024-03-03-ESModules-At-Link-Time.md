@@ -9,10 +9,13 @@ The key idea is to take advantage of the fact that:
 2. JavaScript CDNs such as unpkg and jsDelivr already serve NPM packages as ES modules from URLs
 
 ## Backstory
-A couple of years back, Arman and I had a convesation about scala JS imports, and I successfully showed that a horrible `@JSImport("default", "http://@esModule/import/my/library")` could work. Like this however, it had serious shortcomings - notably that obtaining the ESModules was tied to the _compiled_ artifact.
 
-Arman wrote an SBT plugin which interfaced with the linker circumventing this shortcoming. This allowed the a mapping to be specified at link time in SBT... and dealty with the knarly JSLinker interface.
+A couple of years back, Arman and I had a conversation about scala JS imports, out of which came the odd notion, that horrible `@JSImport("http://cdn/esModule/import/my/library", "default")` could work. And proved it with a hardcoded import. Like this however, it had serious shortcomings - notably that obtaining the ESModules was tied to the _library_ artifact.
+
+Arman wrote an SBT plugin which interfaced with the linker circumventing this shortcoming. This allowed mappings to be specified at application link time in SBT... dealt with the knarly JSLinker interface... and "proved the concept".
 https://github.com/armanbilge/scalajs-importmap
+
+Thanks :-)...
 
 However, I believe the ideal application would be to have it in scala-cli.
 https://github.com/VirtusLab/scala-cli/discussions/1968#discussioncomment-5446977
@@ -26,7 +29,7 @@ Some adjustments to [scala-js-cli](https://github.com/VirtusLab/scala-js-cli/pul
 Armans idea ended up being to represent this accordsing to the import map, supported by browsers.
 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap#import_map_json_representation
 
-An example map, could look like this, which would resolve shoelace components.
+An example map, could look like this, which would resolve shoelace components from a CDN, as they are needed
 
 ```json
 {
@@ -35,19 +38,26 @@ An example map, could look like this, which would resolve shoelace components.
   }
 }
 ```
-And this project, demonstrates that it works, when referencing the ever excellent raquo's shoelace component library. The scalacode that references a button component in the UI library, looks something like.
+This example [shoelace playtime]() project, demonstrates that it works, when referencing the ever excellent raquo's shoelace component library. The scalacode that references a button component in the UI library, looks something like.
 
 ```scala
   @JSImport("@shoelace-style/shoelace/dist/components/button/button.js", JSImport.Namespace)
   @js.native object RawImport extends js.Object
 ```
-But a consumer for the most part, doesn't need to worry about that... at the use site, once the ESModule is loaded, it's just a matter of using the component as if it were a native scala.js component.
+This remaps the import to be
+`"https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.13.1/cdn/components/button/button.js"`
+
+but once the remapping is in place... at the application use site it's just a matter of using the component as if it were a native scala.js component.
+
+Our button may then be used as normal.
 
 ```scala
   val button = Button()
   button.addEventListener("click", _ => println("Hello, world!"))
   document.body.appendChild(button)
 ```
+
+Note: Scala JS facade authors could choose (for bonus points)  to publish the required import map in their library documentation.
 
 ## Use Cases
 
@@ -66,9 +76,7 @@ flowchart LR
   compile --> link --> bundle --> serve --> reload
 ```
 
-When I started, it took some time, to get used to this - needs at least two consoles running. When things go wrong, do I need to look at sbt, vite or what?
-
-We  need all that stuff, but instead of
+When I started, it took some time, to get used to this, what is connceted to what, etc.. When things go wrong, do I need to look at sbt, vite or what? My understanding ended up something like;
 
 ```mermaid
 flowchart LR
@@ -76,35 +84,36 @@ sbt --> vite
 vite --> sbt
 vite --> browser
 ```
-
-We can now do
+As far as I can tell, vite is watching files for when they change. When they change it contacts sbt / mill. This "bi-directional" symbiosis was confusing for me, when I started out. Instead, we can now do
 
 ```mermaid
 flowchart LR
-
   scala-cli --> live-server --> browser
 
 ```
-Where the live server is a vscode extension which reloads on change.
+Where the live server is a vscode extension / intellij static site which reloads on change.
 
-I personally, find this model far easier to understand.
-
+I personally, believe this model is easier to understand when getting started. I'm not an eco-system expert - I could have missed something and feedback is welcome - but before mentally flaming this - please read "non-goals".
 
 ### Use cases: Facade construction
 
-This sweeps SBT / vite out the way, and the speed at which one can get started with scala-cli, makes facade construction way more attractive.
+This sweeps SBT / vite out the way, and the speed at which one can get started with scala-cli, makes, IMHO, facade construction more attractive and easier to swallow in "side projects" to the main application.
+
+Said differently, this allows one to "experiment in the small".
 
 ### Use cases: Testing
 
-Again,
+Because there's no bi-directional communication between vite / sbt, we are reloading linked artefacts into the browser as a static site, with ESModules resolving in browser.
 
+There's no bundling step involved, which mean no process syncronisation, so I think UI becomes "unit testable" via playwrite, rather than "integration testable".
 
-## Prior Art
-https://github.com/explodinggradients/ragas
+I'm at the beginning of exploring this, but if it works as well as I believe, it will fundamentally change the way I test frontend code.
 
-## Notes
-I think there are three key ways we could consider differenting this project.
+## Non-goals
 
-1. Mills fine grained caching, could allow a constant time feedback loop, even as number of documents and prompts grow.
-2. If we write a X platform API, it shoudl be possible to expose diagnostic information to the user via a web api. This could be used to build a UI to help users understand the quality of their prompts.
-3. Consider seperation of retrieval via cosine search, and generation.
+It is categorically _not_ a goal to replace the existing vite / sbt infrastructure. This is intended to _compliment_ to it. Any work done via this mechanism, can be trivially re-used, either through a bundler or the SBT plugin.
+
+It is hoped, that a new user of scala-js, may be able to experience the joys of scala on the frontend, faster and more simply during an experimentation phase, before wheeling in the existing, excellent-but-complex toolchain.
+
+## TODO
+Mill plugin
