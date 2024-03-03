@@ -73,19 +73,19 @@ flowchart LR
 
 When I started, it took some time, to get used to this, what is connceted to what, etc.. When things go wrong, do I need to look at sbt, vite or what? My understanding ended up something like;
 
-```mermaid
+<pre class="mermaid">
 flowchart LR
 sbt --> vite
 vite --> sbt
 vite --> browser
-```
+</pre>
 As far as I can tell, vite is watching files for when they change. When they change it contacts sbt / mill. This "bi-directional" symbiosis was confusing for me, when I started out. Instead, we can now do
 
-```mermaid
+<pre class="mermaid">
 flowchart LR
   scala-cli --> live-server --> browser
+</pre>
 
-```
 Where the live server is a vscode extension / intellij static site which reloads on change.
 
 I personally, believe this model is easier to understand when getting started. I'm not an eco-system expert - I could have missed something and feedback is welcome - but before mentally flaming this - please read "non-goals".
