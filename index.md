@@ -12,3 +12,7 @@ The things I'm thinking about at the moment
 - RAGS : [Retrieval Augmented Generation in Scala](/_posts/2024-01-01-rags.md)
 
 
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true });
+</script>
