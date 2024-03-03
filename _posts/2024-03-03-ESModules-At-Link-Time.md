@@ -20,15 +20,14 @@ However, I believe the ideal application would be to have it in scala-cli.
 https://github.com/VirtusLab/scala-cli/discussions/1968#discussioncomment-5446977
 
 ## Status:
-Merged! - https://github.com/VirtusLab/scala-cli/pull/2737
+[Merged!](https://github.com/VirtusLab/scala-cli/pull/2737)
 
 Some adjustments to [scala-js-cli](https://github.com/VirtusLab/scala-js-cli/pull/47) were needed, as well as some changes to scala-cli itself.
 
 ## Usage Notes
-Armans idea ended up being to represent this accordsing to the import map, supported by browsers.
-https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap#import_map_json_representation
+Armans idea ended up being to represent this accordsing to the import map, [supported by browsers](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap#import_map_json_representation).
 
-An example map, could look like this, which would resolve shoelace components from a CDN, as they are needed
+An example `importmap.json` file, which we would reference in scala-cli, could look like this. The example below which would resolve shoelace components from a CDN, as they are needed.
 
 ```json
 {
@@ -43,12 +42,10 @@ This example [shoelace playtime]() project, demonstrates that it works, when ref
   @JSImport("@shoelace-style/shoelace/dist/components/button/button.js", JSImport.Namespace)
   @js.native object RawImport extends js.Object
 ```
-This remaps the import to be
+The PR, and associated config remaps the import at link to to be;
 `"https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.13.1/cdn/components/button/button.js"`
 
-but once the remapping is in place... at the application use site it's just a matter of using the component as if it were a native scala.js component.
-
-Our button may then be used as normal.
+but once the remapping is in place... at the application use site it's a rather convienient matter of just a matter of using the component as if it were a native scala.js component.
 
 ```scala
   val button = Button()
