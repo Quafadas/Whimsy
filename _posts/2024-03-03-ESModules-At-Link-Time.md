@@ -66,10 +66,10 @@ Currently, I see three attractive use cases for this.
 
 This is the attractive one for me. Scala-js toolchain is relatively involved.
 
-```mermaid
+<pre class="mermaid">
 flowchart LR
   compile --> link --> bundle --> serve --> reload
-```
+</pre>
 
 When I started, it took some time, to get used to this, what is connceted to what, etc.. When things go wrong, do I need to look at sbt, vite or what? My understanding ended up something like;
 
