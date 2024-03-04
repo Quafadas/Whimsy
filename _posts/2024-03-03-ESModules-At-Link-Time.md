@@ -78,17 +78,22 @@ flowchart LR
 sbt --> vite
 vite --> sbt
 vite --> browser
+browser --> vite
+
 </pre>
-As far as I can tell, vite is watching files for when they change. When they change it contacts sbt / mill. This "bi-directional" symbiosis was confusing for me, when I started out. Instead, we can now do
+
+As far as I can tell, vite is watching files for when they change. When they change it contacts sbt / mill. Now, I think we can simplify that to;
 
 <pre class="mermaid">
 flowchart LR
-  scala-cli --> live-server --> browser
+  scala-cli --> live-server
+  live-server --> browser
+  browser --> live-server
 </pre>
 
 Where the live server is a vscode extension / intellij static site which reloads on change.
 
-I personally, believe this model is easier to understand when getting started. I'm not an eco-system expert - I could have missed something and feedback is welcome - but before mentally flaming this - please read "non-goals".
+I'm not an eco-system expert - I could have missed something and feedback is welcome - but before mentally flaming this - please read "non-goals".
 
 ### Use cases: Facade construction
 
