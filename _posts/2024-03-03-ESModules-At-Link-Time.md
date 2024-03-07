@@ -46,16 +46,16 @@ An example `importmap.json` file, which we would reference in scala-cli, could l
   }
 }
 ```
-This example [shoelace playtime]() project, demonstrates that it works, when referencing the ever excellent raquo's shoelace component library. The scalacode that references a button component in the UI library, looks something like.
+This example [shoelace playtime](https://github.com/Quafadas/ShoelaceSansBundler) project, demonstrates that it works. It references the a (prototype) shoelace component facade, and loads the Shoelace `Input` component as an ESModule. The scalacode that references a button component in the UI library, looks something like.
 
 ```scala
   @JSImport("@shoelace-style/shoelace/dist/components/button/button.js", JSImport.Namespace)
   @js.native object RawImport extends js.Object
 ```
-The PR, and associated config remaps the import at link to to be;
+The PR, and associated config remaps the import at link time to to be;
 `"https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.13.1/cdn/components/button/button.js"`
 
-but once the remapping is in place... at the application use site it's a rather convienient matter of just a matter of using the component as if it were a native scala.js component.
+The nice part, is that once the remapping is in place... at the application use site it's a rather convienient to simply using the component as if it were a native scala.js component.
 
 ```scala
   val button = Button()
@@ -63,7 +63,7 @@ but once the remapping is in place... at the application use site it's a rather 
   document.body.appendChild(button)
 ```
 
-Note: Scala JS facade authors could choose (for bonus points)  to publish the required import map in their library documentation.
+Note: Scala JS facade authors could choose (for bonus points) to publish the required import map in their library documentation.
 
 ## Use Cases
 
@@ -72,6 +72,8 @@ Currently, I see three attractive use cases for this.
 1. Facade construction
 2. Testing
 3. "on ramp"
+
+All of which are targeted at keeping people  "in the small" for longer, before they need to wheel in the existing, excellent-but-complex toolchain.
 
 ### Use cases: On ramp
 
