@@ -2,6 +2,17 @@
 title: Rewriting ESModules at link time in Scala JS
 ---
 
+## TL:DR
+
+https://quafadas.github.io/ShoelaceSansBundler/
+
+https://github.com/Quafadas/ShoelaceSansBundler
+
+- One scala file
+- Scala-cli only
+- No bundler
+- with shoelace webcomponents...
+
 ## Why?
 The key idea is to take advantage of the fact that:
 
@@ -10,7 +21,7 @@ The key idea is to take advantage of the fact that:
 
 ## Backstory
 
-A couple of years back, Arman and I had a conversation about scala JS imports, out of which came the odd notion, that horrible `@JSImport("http://cdn/esModule/import/my/library", "default")` could work. And proved it with a hardcoded import. Like this however, it had serious shortcomings - notably that obtaining the ESModules was tied to the _library_ artifact.
+A couple of years back, Arman and I had a conversation about scala JS imports, out of which came the odd notion, that the rather odd looking `@JSImport("http://cdn/esModule/import/my/library", "default")` turned out to import an ES Module. As a hardcoded ES module, this has serious shortcomings - notably that obtaining the ESModules was tied to the _library_ artifact.
 
 Arman wrote an SBT plugin which interfaced with the linker circumventing this shortcoming. This allowed mappings to be specified at application link time in SBT... dealt with the knarly JSLinker interface... and ["proved the concept"](https://github.com/armanbilge/scalajs-importmap)
 
