@@ -192,14 +192,14 @@ extension (vec: Array[Double])
 
 And rather resistant to optimisation or parralisation. There are parrallel algorthims ...
 
-https://en.wikipedia.org/wiki/Prefix_sum#:~:text=In%20computer%20science,%20the%20prefix%20sum,#:~:text=In%20computer%20science,%20the%20prefix%20sum,
+[Wikipedia](https://en.wikipedia.org/wiki/Prefix_sum#:~:text=In%20computer%20science,%20the%20prefix%20sum,#:~:text=In%20computer%20science,%20the%20prefix%20sum,)
 
-https://developer.nvidia.com/gpugems/gpugems3/part-vi-gpu-computing/chapter-39-parallel-prefix-sum-scan-cuda#:~:text=A%20simple%20and%20common%20parallel%20algorithm#:~:text=A%20simple%20and%20common%20parallel%20algorithm
+[nvidia](https://developer.nvidia.com/gpugems/gpugems3/part-vi-gpu-computing/chapter-39-parallel-prefix-sum-scan-cuda#:~:text=A%20simple%20and%20common%20parallel%20algorithm#:~:text=A%20simple%20and%20common%20parallel%20algorithm)
 
 ... but they are complex. Here's my implentation odf the prefix sum. 
 
 https://github.com/Quafadas/vecxt/blob/93df12f206308751ef7dc5318e97a1d64d0ac0fc/vecxt/jvm/src/arrays.scala#L303
 
-It appears to pass the unit tests, and - Surprise! It performs about 100x worse than a simple while loop. 
+It appears to pass the unit tests, and - Surprise! - performs about 100x worse than a simple while loop. Awesome. 
 
-It only took most of a day to find that out... but self evidently, it isn't worth including. 
+It only took most of a day to find that out... but self evidently, it isn't worth including. Currently, I'm not in a position to track down, whether that is as function of a poor implementation, poorly suited algorithm, or Panama itself.
