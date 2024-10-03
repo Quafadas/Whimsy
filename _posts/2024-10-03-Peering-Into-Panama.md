@@ -77,7 +77,7 @@ More or less the first thing I'd expect anyone to do with Panama, is sum a list 
 
 The first implementation is the one we used, and the results are, at first glance quite compelling! 
 
-![screencap](Whimsey/docs/assets/sum_bench.png)
+![screencap](/docs/assets/sum_bench.png)
 
 As the array size increases, we appear to get better results. In fact, it looks like we can hit almost 4x for large arrays, which (coincidentally?) is the number of lanes for the preferred double species on the hardware, that the benchmark ran on. Perhaps, this shows us the promise of panama and SIMD.
 
