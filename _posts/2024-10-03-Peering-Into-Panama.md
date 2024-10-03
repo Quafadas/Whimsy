@@ -20,7 +20,7 @@ Desipte being on something like the 8th incubator, there is definitely still an 
 ## Simple cases
 
 ### Sum
-More or less the first thing I'd expect anyone to do with Panama, is sum a list of doubles. Even with something this simple, there are a few ways to [skin this cat](https://github.com/Quafadas/vecxt/blob/main/benchmark/src/sum.scala). For this trivial algorthim, there is mental overhead in the reading / writing. 
+More or less the first thing I'd expect anyone to do with the Vector API, is sum a list of doubles. Even with something this simple, there are a few ways to [skin this cat](https://github.com/Quafadas/vecxt/blob/main/benchmark/src/sum.scala). For this trivial algorthim, there is mental overhead in the reading / writing. 
 
 ```scala
 
@@ -75,15 +75,17 @@ More or less the first thing I'd expect anyone to do with Panama, is sum a list 
     end sum3
 ```
 
-The first implementation is the one we used, and the results are, at first glance quite compelling! 
+The first implementation is the one we used, and the results (sum_vec) are, at first glance quite compelling vs the JVM loop (sum_loop)! 
 
 ![screencap](/docs/assets/sum_bench.png)
 
-As the array size increases, we appear to get better results. In fact, it looks like we can hit almost 4x for large arrays, which (coincidentally?) is the number of lanes for the preferred double species on the hardware, that the benchmark ran on. Perhaps, this shows us the promise of panama and SIMD.
+The first array has size 3, which means it should not be vectorised. That the results and errors bars are similar, should give us a control that the measurements stand some chance of being meaningful. 
+
+As the array size increases, we appear to get better results. In fact, it looks like we can hit almost 4x for large arrays, which (coincidentally?) is the number of lanes for the preferred double species on the hardware, that the benchmark ran on. Perhaps, this shows us the promise of panama and SIMD. 
 
 ### Booleans
 
-The benefits are particulaly profound, for where you have many lanes. As the Boolean Species has a very wide "shape", they can be processed 64 at a time. If you happen to be working through a large number of logical operations, Panama is an easy, and no brains winner! I believe it ends up being capped at about a 10x vs the "obvious" implementation. In this case I believe memory access bounds the algorithm. 
+The benefits of the VectorAPI are particulaly profound, for where you have many lanes. As the Boolean Species has a very wide "shape", they are be processed 64 (!) at a time in a single CPU cycle. If you happen to be working through a large number of logical operations, Panama is an easy, and no brains winner! I benchmarked it at about a 10x speedup vs the "obvious" implementation. In this case I believe memory access bounds the performance gain. 
 
 Still, a whole order of magnitude speed up for little brainspace is... attractive. 
 
@@ -161,13 +163,13 @@ The answer it turns out, is both reasonable and in hindisght obvious (I emailed 
 
 What it can do, is fallback to it's slow (10x) path. 
 
-Currently, knowing whether you're hitting the hardware accelerated path or not basically... means using JMH.
+Currently, knowing whether you're hitting the hardware accelerated path or not basically... means using JMH or reading the compiled artefacts. There are no warnings or diagnostics. Make no assumptions, benchmark carefully.
 
-** This raises the question over whether the method _should_ be in the API? The answer is above my paygrade, but considering the implied lowest common hardware bound across all operators and the dimensional explosion of documentation, there isn't a good answer. I think this is a hard problem. 
+** This raises the question over whether the method _should_ be in the API? The answer is above my paygrade, but considering the implied lowest common hardware bound across all operators and the dimensional explosion of documentation, there isn't a good answer. Perhaps a consistent API surface is the best solution.Hard problem. 
 
 ## Complex cases
 
-As soon as one moves beyond trivial algorithms, the "free lunch" drops off quite quickly. 
+As soon as one moves beyond trivial algorithms, the "free lunch" drops off quite quickly. I tried (and failed) to achieve performance benefits on two "more complex" algorithms. In both cases I could write a "correct" implementation. Both cases bled 10x (i.e. 10x slower) than the simple loop. 
 
 ### SIMD matrix slicing
 
@@ -194,3 +196,10 @@ https://en.wikipedia.org/wiki/Prefix_sum#:~:text=In%20computer%20science,%20the%
 
 https://developer.nvidia.com/gpugems/gpugems3/part-vi-gpu-computing/chapter-39-parallel-prefix-sum-scan-cuda#:~:text=A%20simple%20and%20common%20parallel%20algorithm#:~:text=A%20simple%20and%20common%20parallel%20algorithm
 
+... but they are complex. Here's my implentation odf the prefix sum. 
+
+https://github.com/Quafadas/vecxt/blob/93df12f206308751ef7dc5318e97a1d64d0ac0fc/vecxt/jvm/src/arrays.scala#L303
+
+It appears to pass the unit tests, and - Surprise! It performs about 100x worse than a simple while loop. 
+
+It only took most of a day to find that out... but self evidently, it isn't worth including. 
